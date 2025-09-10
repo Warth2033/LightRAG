@@ -297,10 +297,16 @@ class LightRAG:
     # ---
 
     llm_model_func: Callable[..., object] | None = field(default=None)
-    """Function for interacting with the large language model (LLM). Must be set before use."""
+    """Function for interacting with the large language model (LLM) for query responses. Must be set before use."""
+
+    kg_llm_model_func: Callable[..., object] | None = field(default=None)
+    """Function for interacting with the LLM for knowledge graph construction (entity/relation extraction). If None, uses llm_model_func."""
 
     llm_model_name: str = field(default="gpt-4o-mini")
     """Name of the LLM model used for generating responses."""
+
+    kg_llm_model_name: str = field(default="gpt-4o-mini")
+    """Name of the LLM model used for knowledge graph construction."""
 
     summary_max_tokens: int = field(
         default=int(os.getenv("SUMMARY_MAX_TOKENS", DEFAULT_SUMMARY_MAX_TOKENS))
@@ -584,6 +590,22 @@ class LightRAG:
                 **self.llm_model_kwargs,
             )
         )
+
+        # Initialize KG LLM function (fallback to main LLM if not provided)
+        if self.kg_llm_model_func is None:
+            self.kg_llm_model_func = self.llm_model_func
+        else:
+            self.kg_llm_model_func = priority_limit_async_func_call(
+                self.llm_model_max_async,
+                llm_timeout=self.default_llm_timeout,
+                queue_name="KG LLM func:",
+            )(
+                partial(
+                    self.kg_llm_model_func,  # type: ignore
+                    hashing_kv=hashing_kv,
+                    **self.llm_model_kwargs,
+                )
+            )
 
         self._storages_status = StoragesStatus.CREATED
 

@@ -265,7 +265,8 @@ async def _summarize_descriptions(
     Returns:
         Summarized description string
     """
-    use_llm_func: callable = global_config["llm_model_func"]
+    # Use KG LLM function for knowledge graph construction, fallback to main LLM
+    use_llm_func: callable = global_config.get("kg_llm_model_func") or global_config["llm_model_func"]
     # Apply higher priority (8) to entity/relation summary tasks
     use_llm_func = partial(use_llm_func, _priority=8)
 
@@ -1881,7 +1882,8 @@ async def extract_entities(
     llm_response_cache: BaseKVStorage | None = None,
     text_chunks_storage: BaseKVStorage | None = None,
 ) -> list:
-    use_llm_func: callable = global_config["llm_model_func"]
+    # Use KG LLM function for entity extraction, fallback to main LLM
+    use_llm_func: callable = global_config.get("kg_llm_model_func") or global_config["llm_model_func"]
     entity_extract_max_gleaning = global_config["entity_extract_max_gleaning"]
 
     ordered_chunks = list(chunks.items())

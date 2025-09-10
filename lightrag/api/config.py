@@ -314,10 +314,20 @@ def parse_args() -> argparse.Namespace:
     # Get MAX_GRAPH_NODES from environment
     args.max_graph_nodes = get_env_value("MAX_GRAPH_NODES", 1000, int)
 
+    # KG LLM configuration - separate LLM for knowledge graph construction
+    args.kg_llm_binding = get_env_value("KG_LLM_BINDING", None)
+    args.kg_llm_model = get_env_value("KG_LLM_MODEL", None)
+    args.kg_llm_binding_host = get_env_value("KG_LLM_BINDING_HOST", None)
+    args.kg_llm_binding_api_key = get_env_value("KG_LLM_BINDING_API_KEY", None)
+
     # Handle openai-ollama special case
     if args.llm_binding == "openai-ollama":
         args.llm_binding = "openai"
         args.embedding_binding = "ollama"
+    
+    # Handle KG LLM openai-ollama special case
+    if args.kg_llm_binding == "openai-ollama":
+        args.kg_llm_binding = "openai"
 
     # Ollama ctx_num
     args.ollama_num_ctx = get_env_value("OLLAMA_NUM_CTX", 32768, int)
@@ -330,6 +340,10 @@ def parse_args() -> argparse.Namespace:
     )
     args.llm_binding_api_key = get_env_value("LLM_BINDING_API_KEY", None)
     args.embedding_binding_api_key = get_env_value("EMBEDDING_BINDING_API_KEY", "")
+
+    # Set KG LLM host if not specified, fallback to main LLM host
+    if args.kg_llm_binding and not args.kg_llm_binding_host:
+        args.kg_llm_binding_host = get_default_host(args.kg_llm_binding)
 
     # Inject model configuration
     args.llm_model = get_env_value("LLM_MODEL", "mistral-nemo:latest")

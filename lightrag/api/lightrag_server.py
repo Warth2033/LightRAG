@@ -283,6 +283,29 @@ def create_app(args):
         except ImportError as e:
             raise Exception(f"Failed to import {binding} LLM binding: {e}")
 
+    def create_kg_llm_model_func(kg_binding: str):
+        """
+        Create KG LLM model function based on binding type.
+        Uses lazy import to avoid unnecessary dependencies.
+        """
+        try:
+            if kg_binding == "lollms":
+                from lightrag.llm.lollms import lollms_model_complete
+
+                return lollms_model_complete
+            elif kg_binding == "ollama":
+                from lightrag.llm.ollama import ollama_model_complete
+
+                return ollama_model_complete
+            elif kg_binding == "aws_bedrock":
+                return bedrock_model_complete  # Already defined locally
+            elif kg_binding == "azure_openai":
+                return azure_openai_model_complete  # Already defined locally
+            else:  # openai and compatible
+                return openai_alike_model_complete  # Already defined locally
+        except ImportError as e:
+            raise Exception(f"Failed to import {kg_binding} LLM binding: {e}")
+
     def create_llm_model_kwargs(binding: str, args, llm_timeout: int) -> dict:
         """
         Create LLM model kwargs based on binding type.
@@ -529,11 +552,20 @@ def create_app(args):
 
     # Initialize RAG with unified configuration
     try:
+        # Create KG LLM function if KG binding is specified
+        kg_llm_model_func = None
+        kg_llm_model_name = None
+        if args.kg_llm_binding:
+            kg_llm_model_func = create_kg_llm_model_func(args.kg_llm_binding)
+            kg_llm_model_name = args.kg_llm_model
+        
         rag = LightRAG(
             working_dir=args.working_dir,
             workspace=args.workspace,
             llm_model_func=create_llm_model_func(args.llm_binding),
             llm_model_name=args.llm_model,
+            kg_llm_model_func=kg_llm_model_func,
+            kg_llm_model_name=kg_llm_model_name,
             llm_model_max_async=args.max_async,
             summary_max_tokens=args.summary_max_tokens,
             summary_context_size=args.summary_context_size,
