@@ -108,16 +108,15 @@ PROMPTS["entity_extraction_examples"] = [
 (relationship{tuple_delimiter}[175：测试设置（检测第四通道18mA）|Min:17960|Max:18040|Mea:17951]{tuple_delimiter}产品设计缺陷{tuple_delimiter}原因分类{tuple_delimiter}不良现象说明 “[175：测试设置（检测第四通道18mA）|Min:17960|Max:18040|Mea:17951]” 所属原因分类为 “产品设计缺陷”。){record_delimiter}
 (relationship{tuple_delimiter}[175：测试设置（检测第四通道18mA）|Min:17960|Max:18040|Mea:17951]{tuple_delimiter}其他产品设计缺陷{tuple_delimiter}原因子类{tuple_delimiter}不良现象说明 “[175：测试设置（检测第四通道18mA）|Min:17960|Max:18040|Mea:17951]” 所属原因子类为 “其他产品设计缺陷”。){record_delimiter}
 (relationship{tuple_delimiter}[175：测试设置（检测第四通道18mA）|Min:17960|Max:18040|Mea:17951]{tuple_delimiter}电流检测电路设计缺陷，更换R133{tuple_delimiter}维修措施{tuple_delimiter}不良现象说明 “[175：测试设置（检测第四通道18mA）|Min:17960|Max:18040|Mea:17951]” 对应的维修措施为 “电流检测电路设计缺陷，更换 R133”。){record_delimiter}
-(relationship{tuple_delimiter}其他产品设计缺陷{tuple_delimiter}产品设计缺陷{tuple_delimiter}原因分类{tuple_delimiter}原因子类 “其他产品设计缺陷” 对应的原因分类为 “产品设计缺陷”。){record_delimiter}
 (relationship{tuple_delimiter}其他产品设计缺陷{tuple_delimiter}D70130{tuple_delimiter}原因代码{tuple_delimiter}原因子类 “其他产品设计缺陷” 对应的原因代码为 “D70130”。){record_delimiter}
 (relationship{tuple_delimiter}其他产品设计缺陷{tuple_delimiter}电流检测电路设计缺陷，更换R133{tuple_delimiter}维修措施{tuple_delimiter}原因子类 “其他产品设计缺陷” 对应的维修措施为 “电流检测电路设计缺陷，更换 R133”。){record_delimiter}
 (relationship{tuple_delimiter}其他产品设计缺陷{tuple_delimiter}R133{tuple_delimiter}维修部件{tuple_delimiter}原因子类 “其他产品设计缺陷” 相关的维修更换部件为元件 “R133”。){record_delimiter}
 (relationship{tuple_delimiter}其他产品设计缺陷{tuple_delimiter}DB0009{tuple_delimiter}不良单板{tuple_delimiter}原因子类 “其他产品设计缺陷” 对应的不良单板编码为 “DB0009”。){record_delimiter}
+(relationship{tuple_delimiter}产品设计缺陷{tuple_delimiter}其他产品设计缺陷{tuple_delimiter}类别层级{tuple_delimiter}原因分类 “产品设计缺陷” 下包含 “其他产品设计缺陷”原因子类。){record_delimiter}
 (relationship{tuple_delimiter}M0007{tuple_delimiter}T2{tuple_delimiter}生产流程{tuple_delimiter}产品编码 “M0007” 在生产过程中经过工序 “T2” 的时候出现故障。){record_delimiter}
 (relationship{tuple_delimiter}M0007{tuple_delimiter}2025/7/4 11:03:24{tuple_delimiter}维修时间{tuple_delimiter}产品编码 “M0007” 于 “2025 年 7 月 4 日 11 时 03 分 24 秒” 完成维修。){record_delimiter}
 (relationship{tuple_delimiter}T2{tuple_delimiter}SMT-AOI和测试段不良使用-勿删{tuple_delimiter}工序故障模式{tuple_delimiter}生产工序 “T2” 的典型故障现象有 “SMT-AOI和测试段不良使用-勿删”。){record_delimiter}
 (relationship{tuple_delimiter}电流检测电路设计缺陷，更换R133{tuple_delimiter}R133{tuple_delimiter}更换部件{tuple_delimiter}维修措施 “电流检测电路设计缺陷，更换 R133” 涉及更换元件 “R133”。){record_delimiter}
-(relationship{tuple_delimiter}产品设计缺陷{tuple_delimiter}其他产品设计缺陷{tuple_delimiter}类别层级{tuple_delimiter}缺陷分类 “产品设计缺陷” 下的子类包含 “其他产品设计缺陷”。){record_delimiter}
 (relationship{tuple_delimiter}研发设计类问题{tuple_delimiter}产品设计缺陷{tuple_delimiter}定位与分类{tuple_delimiter}问题定位 “研发设计类问题” 通常归因为 “产品设计缺陷”。){record_delimiter}
 {completion_delimiter}
 
@@ -144,7 +143,7 @@ PROMPTS["entity_extraction_examples"] = [
 (relationship{tuple_delimiter}腾讯智言{tuple_delimiter}自然语言处理技术{tuple_delimiter}技术应用, 突破创新{tuple_delimiter}腾讯智言在自然语言处理技术方面取得了重大突破。){record_delimiter}
 {completion_delimiter}
 
-""",
+"""
 ]
 
 PROMPTS["summarize_entity_descriptions"] = """---角色---
@@ -238,7 +237,7 @@ PROMPTS["rag_response"] = """---角色---
 
 ---目标---
 
-基于知识库生成简洁、有逻辑且可执行的回复，优先总结事故原因与解决方案，结合当前问题以及（如有）对话历史。所提供内容必须来源于知识库或知识图谱的上下文，并结合相关通用知识，避免虚构或推测。
+基于知识库生成简洁、清晰且具有指导性的回复，必须优先总结**产品型号 + 事故原因 + 解决方案**，结合当前问题以及（如有）对话历史。所提供内容必须严格来源于知识库或知识图谱的上下文，并结合相关通用知识，禁止虚构或推测。
 
 ---对话历史---
 {history}
@@ -249,12 +248,12 @@ PROMPTS["rag_response"] = """---角色---
 ---回复指南---
 **1. 回答结构与重点：**
 
-- **首先提炼高相关度查询结果中可明确归因的“原因 + 解决方案”**，此部分必须作为回复的开头。
-  - “原因”应清晰说明导致问题的核心因素。
+- **必须首先总结文档中高相关度内容中的“产品型号 + 原因 + 解决方案”组合**。
+  - **产品型号**清楚界定属于哪个产品，不同产品间的信息不能混淆。
+  - **原因**应清楚解释问题发生的核心因素。
   - “解决方案”必须是**可执行的具体操作建议**，避免空洞描述。
   - 不允许直接罗列上下文内容，必须组织成**具有引导性、解释性的话语**。
-  - 如有多个可能原因，请按相关度排序，并分别配对解决方案。
-
+  - 如有多个产品-原因-解决方案组合，请按相关度排序，每组产品-原因-解决方案独立表述，不能把多个原因、方案罗列在一起。
 - 其次再补充其他相关信息或次要因素，总结内容应对用户问题形成闭环解释。
 
 **2. 内容与遵循：**
@@ -269,12 +268,11 @@ PROMPTS["rag_response"] = """---角色---
 - 目标格式与长度：{response_type}
 
 **4. 参考文献与引用说明：**
-- 回复末尾添加 **“参考文献”** 部分，列出最多 5 条高相关引用。
+- 回复末尾添加 **“参考文献”** 部分，列出前 10 条高相关引用。
 - 格式如下：
   - 知识图谱实体：`[KG] <entity_name>`
   - 知识图谱关系：`[KG] <entity1_name> - <entity2_name>`
   - 文档块：`[DC] <file_path_or_document_name>`
-- 每条引用后用括号标注相对相关度（如 `相关度：0.93`）
 
 **5. 补充知识：**
 - 故障维修记录表数据字段之间的逻辑关系如下：
@@ -290,6 +288,13 @@ PROMPTS["rag_response"] = """---角色---
   → （引发）→ 问题定位 / 原因分类 / 原因子类 / 原因代码
   → （处理方式）→ 维修说明 → （操作部件）→ 元件位号
 
+**6. 问题引导：**
+- 如果用户上下文非常简短，包含信息较少，或者表述不清晰：
+  - 结尾主动给出一些问题来引导用户补充完整信息。
+    - 如：“能否给出更加具体的不良现象说明，或提供相关的工序、产品编码等信息？”
+  - 主动给出一些用户可能关心的问题。
+    - 如：猜你想问：“M0003在哪个工序最常出现故障？”、“M0003在T2工序计算电流校准系数失败的原因是什么？”
+
 ---用户上下文---
 - 用户附加提示：{user_prompt}
 
@@ -302,7 +307,7 @@ PROMPTS["naive_rag_response"] = """---角色---
 
 ---目标---
 
-基于文档块内容生成简洁、清晰且具有指导性的回复，必须优先总结**事故原因 + 解决方案**，结合当前问题与对话历史，整合文档块信息和通用知识。所有信息必须严格来源于文档块，不得凭空推测或虚构。
+基于文档块内容生成简洁、清晰且具有指导性的回复，必须优先总结**产品型号 + 事故原因 + 解决方案**，结合当前问题与对话历史，整合文档块信息和通用知识。所有信息必须严格来源于文档块，不得凭空推测或虚构。
 
 ---对话历史---
 {history}
@@ -313,12 +318,13 @@ PROMPTS["naive_rag_response"] = """---角色---
 ---回复指南---
 **1. 回答结构与重点：**
 
-- **必须首先总结文档中高相关度内容中的“原因 + 解决方案”组合**，此部分为回复的开头重点。
+  最终正式回复应基于上述推理过程的结论。
+- **必须首先总结文档中高相关度内容中的“产品型号 + 原因 + 解决方案”组合**。
+  - **产品型号**清楚界定属于哪个产品，不同产品间的信息不能混淆。
   - **原因**应清楚解释问题发生的核心因素。
   - **解决方案**应为**明确、可执行的具体建议或操作**，不能是模糊或空泛描述。
-  - 此部分内容不可直接复制粘贴上下文原文，需重组语言进行解释性表达，引导用户理解并采取行动。
-  - 若有多个原因+方案组合，请按相关度高低排序，每组独立表述。
-
+  - 不可直接照搬上下文原文，需重组语言进行解释性表达，引导用户理解并采取行动。
+  - 如有多个产品-原因-解决方案组合，请按相关度排序，每组产品-原因-解决方案独立表述，不能把多个原因、方案罗列在一起。
 - 在此基础上，再补充其他相关辅助信息，帮助用户全面理解问题背景与处理思路。
 
 **2. 内容与遵循：**
@@ -334,14 +340,14 @@ PROMPTS["naive_rag_response"] = """---角色---
 - 目标格式与长度：{response_type}
 
 **4. 参考文献 / 引用说明：**
-- 回复末尾添加 **“参考文献”** 部分，列出最多 10 个最高相关的文档引用。
+- 回复末尾添加 **“参考文献”** 部分，列出前 10 个最高相关的文档引用。
 - 引用格式：`[DC] <file_path_or_document_name>（相关度：x.xx）`
-- 引用顺序按相关度从高到低排列。
+
 
 **5. 补充知识：**
 - 故障维修记录表数据字段之间的逻辑关系如下：
   - 不良现象说明 是问题的“表征层”，记录实际发生的异常症状，如异常电流、信号失真，是整个问题追溯的起点。
-  - 工序 决定了不良现象的发生位置，不同工序代表不同测试维度和环境要求，是问题定位的重要线索。
+  - 工序 和 产品编码 决定了不良现象的发生位置，不同工序代表不同测试维度和环境要求，是问题定位的重要线索。
   - 问题定位 + 原因分类 + 原因子类 + 原因代码 构成“归因层”，通过人工经验或技术分析，对不良现象进行系统性归类，支持质量统计与缺陷模式提取。
   - 不良单板编码 提供了板级精度的标识符，是实现单板级质量追溯、定位重复性故障的关键字段。
   - 维修说明 + 元件位号 属于“执行层”，体现具体的维修动作，也是未来工艺修正和设计更改的依据。
@@ -351,6 +357,13 @@ PROMPTS["naive_rag_response"] = """---角色---
   → （影响）→ 不良单板编码
   → （引发）→ 问题定位 / 原因分类 / 原因子类 / 原因代码
   → （处理方式）→ 维修说明 → （操作部件）→ 元件位号
+
+**6. 问题引导：**
+- 如果用户上下文非常简短，包含信息较少，或者表述不清晰：
+  - 结尾主动给出一些问题来引导用户补充完整信息。
+    - 如：“能否给出更加具体的不良现象说明，或提供相关的工序、产品编码等信息？”
+  - 主动给出一些用户可能关心的问题。
+    - 如：猜你想问：“M0003在哪个工序最常出现故障？”、“M0003在T2工序计算电流校准系数失败的原因是什么？”
 
 ---用户上下文---
 - 用户附加提示：{user_prompt}
